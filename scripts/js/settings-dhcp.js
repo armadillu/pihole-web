@@ -31,13 +31,53 @@ function renderHostnameCLID(data, type) {
   return data;
 }
 
+function renderIsStatic(data, type) {
+  // Display and search content
+  if (type === "display" || type === "filter") {
+    return data;
+  }
+
+  // Sorting content
+  return data;
+}
+
+let staticEntries = [];
+let leasesListWithExtraInfo = [];
+
 $(() => {
-  dhcpLeaesTable = $("#DHCPLeasesTable").DataTable({
-    ajax: {
-      url: document.body.dataset.apiurl + "/dhcp/leases",
+
+  //fetch the 2 data items we need to combine into one
+  $.ajax({
+    url: document.body.dataset.apiurl + "/config/dhcp?detailed=true",
+    async: false,
+  }).done(data => {
+    data.config.dhcp.hosts.value.forEach(function(line, index) {
+      const parsed = parseStaticDHCPLine(line);
+      staticEntries.push(parsed.ipaddr);
+    });
+  });
+
+  //get 2nd data src, mod data with with info from the 1st
+  $.ajax({
+    url: document.body.dataset.apiurl + "/dhcp/leases",
       type: "GET",
+      async: false,
       dataSrc: "leases",
-    },
+  }).done(leasesList => {
+    leasesListWithExtraInfo = leasesList;
+    leasesListWithExtraInfo.leases.forEach(function(obj, index){
+      if(staticEntries.includes(obj.ip)){
+        obj.is_static = "static";
+      }else{
+        obj.is_static = "dynamic";
+      }
+    }); 
+  });
+  
+
+  dhcpLeaesTable = $("#DHCPLeasesTable").DataTable({
+    data: leasesListWithExtraInfo.leases,
+    paging: false,
     order: [[1, "asc"]],
     columns: [
       { data: null, width: "22px" },
@@ -46,7 +86,8 @@ $(() => {
       { data: "hwaddr" },
       { data: "expires", render: utils.renderTimespan },
       { data: "clientid", render: renderHostnameCLID },
-      { data: null, width: "22px", orderable: false },
+      { data: "is_static" },
+      { data: null, width: "22px", orderable: false }
     ],
     columnDefs: [
       {
@@ -90,7 +131,7 @@ $(() => {
         .data("hwaddr", data.hwaddr || "")
         .data("ip", data.ip || "")
         .data("hostname", data.name || "");
-      $("td:eq(6)", row).empty().append($deleteBtn, " ", $copyBtn);
+      $("td:eq(7)", row).empty().append($deleteBtn, " ", $copyBtn);
     },
     select: {
       style: "multi",

@@ -154,6 +154,7 @@ mg.include('scripts/lua/settings_header.lp','r')
                                     <th>MAC address</th>
                                     <th>Expiration</th>
                                     <th>Client ID</th>
+                                    <th>Lease Type</th>
                                     <td></td>
                                 </tr>
                             </thead>
