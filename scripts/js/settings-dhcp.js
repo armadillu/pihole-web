@@ -433,8 +433,6 @@ function renderStaticDHCPTable() {
       continue;
     }
 
-    dynamicEntries
-
     const tr = $("<tr>")
       .append($('<td contenteditable="true" class="static-hwaddr"></td>'))
       .append($('<td contenteditable="true" class="static-ipaddr"></td>'))
