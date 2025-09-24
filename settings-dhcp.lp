@@ -155,7 +155,7 @@ mg.include('scripts/lua/settings_header.lp','r')
                                     <th>Expiration</th>
                                     <th>Client ID</th>
                                     <th>Lease Type</th>
-                                    <td></td>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -181,6 +181,7 @@ mg.include('scripts/lua/settings_header.lp','r')
                                         <th>MAC address</th>
                                         <th>IP address</th>
                                         <th>Hostname</th>
+                                        <th>Active Lease</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>

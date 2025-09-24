@@ -43,6 +43,7 @@ function renderIsStatic(data, type) {
 
 let staticEntries = [];
 let leasesListWithExtraInfo = [];
+let dynamicEntries = [];
 
 $(() => {
 
@@ -66,6 +67,7 @@ $(() => {
   }).done(leasesList => {
     leasesListWithExtraInfo = leasesList;
     leasesListWithExtraInfo.leases.forEach(function(obj, index){
+      dynamicEntries.push(obj.ip);
       if(staticEntries.includes(obj.ip)){
         obj.is_static = "static";
       }else{
@@ -431,10 +433,13 @@ function renderStaticDHCPTable() {
       continue;
     }
 
+    dynamicEntries
+
     const tr = $("<tr>")
       .append($('<td contenteditable="true" class="static-hwaddr"></td>'))
       .append($('<td contenteditable="true" class="static-ipaddr"></td>'))
       .append($('<td contenteditable="true" class="static-hostname"></td>'))
+      .append($('<td contenteditable="true" class="static-is-active-lease"></td>'))
       .append(
         $("<td></td>")
           .append(
@@ -468,6 +473,11 @@ function renderStaticDHCPTable() {
     tr.find(".static-hwaddr").text(parsed.hwaddr);
     tr.find(".static-ipaddr").text(parsed.ipaddr);
     tr.find(".static-hostname").text(parsed.hostname);
+        if(dynamicEntries.includes(parsed.ipaddr)){
+      tr.find(".static-is-active-lease").text("yes");
+    }else{
+      tr.find(".static-is-active-lease").text("no");
+    }
     tbody.append(tr);
   }
 
